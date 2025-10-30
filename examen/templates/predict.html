@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción MNIST</title>
+    <style>
+        /* Fondo con degradado */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Contenedor principal */
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px 50px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            font-size: 2em;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        /* Input personalizado */
+        input[type="file"] {
+            display: none;
+        }
+
+        label {
+            background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        label:hover {
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            transform: scale(1.05);
+        }
+
+        /* Botón */
+        button {
+            background: none;
+            border: 2px solid #00d2ff;
+            color: #00d2ff;
+            padding: 10px 25px;
+            border-radius: 25px;
+            margin-top: 20px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #00d2ff;
+            color: #fff;
+            box-shadow: 0 0 10px #00d2ff;
+        }
+
+        #resultado {
+            margin-top: 25px;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #00e6ac;
+            text-shadow: 0 0 10px rgba(0,230,172,0.6);
+        }
+
+        /* Animación suave */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            animation: fadeIn 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Clasificador de Dígitos MNIST</h1>
+        <p>Sube una imagen (28x28) para predecir el dígito</p>
+
+        <form id="formulario" enctype="multipart/form-data">
+            <label for="file">📁 Seleccionar Imagen</label>
+            <input type="file" name="file" id="file" accept="image/*" required>
+            <br>
+            <button type="submit">🚀 Predecir</button>
+        </form>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('formulario');
+        const resultado = document.getElementById('resultado');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            resultado.innerText = "Analizando... 🔍";
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            resultado.innerHTML = `El dígito predicho es: <span style="font-size:1.5em;">${data.prediccion}</span>`;
+        });
+    </script>
+</body>
+</html>
